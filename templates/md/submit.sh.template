@@ -1,0 +1,35 @@
+#!/bin/bash
+#SBATCH --account=jeakola
+#SBATCH --job-name={data_name}
+#SBATCH --output=my_job_%j.out
+#SBATCH --error=my_job_%j.err
+#SBATCH --partition=large
+#SBATCH --time=2-00:00:00
+#SBATCH --nodes={nodes}
+#SBATCH --ntasks-per-node={tasks}
+#SBATCH --cpus-per-task={cpus_per_task}
+#SBATCH --mem=16G
+
+module purge
+module load gcc/13.2.0 openmpi/5.0.5 intel-oneapi-mkl/2024.0.0
+
+# Update path to your LAMMPS installation if needed
+export PATH=/projappl/jeakola/ekvikne/lammps/bin:$PATH
+
+# Set the number of OpenMP threads
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+# Set LD_LIBRARY_PATH to include the directory with libtorch.so
+export LD_LIBRARY_PATH=/projappl/jeakola/ekvikne/libtorch/lib:$LD_LIBRARY_PATH
+
+# Run LAMMPS with the appropriate input file
+srun lmp -sf omp -in in.lammps
+
+# Capture the job ID
+JOBID=$SLURM_JOB_ID
+
+# Wait a moment to ensure the job data is available
+sleep 5
+
+# Write `seff` output to a file
+seff $JOBID > seff_output_${{JOBID}}.txt

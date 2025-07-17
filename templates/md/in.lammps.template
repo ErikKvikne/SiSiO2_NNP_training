@@ -1,0 +1,68 @@
+# LAMMPS Input Script for Si/SiO2 Interface Simulation using MACE
+
+# Initialization
+units         metal
+atom_style    atomic
+atom_modify   map yes
+newton        on
+
+boundary      p p p
+
+# Atom Definition
+read_data     {data_file}
+
+# Masses (if not defined in data file)
+mass          1 15.9994    # O
+mass          2 28.0855    # Si
+
+# Potential Definition
+pair_style    mace no_domain_decomposition
+pair_coeff    * * /projappl/jeakola/ekvikne/force_fields/mace-small-density-agnesi-stress.model-lammps.pt O Si
+
+# Neighbor List Settings
+neighbor      2.0 bin
+neigh_modify  delay 0 every 1 check yes
+
+# Thermodynamic Output
+thermo        100
+thermo_style  custom step temp etotal pe ke press vol
+
+# Dump Snapshots
+dump           dmp all custom 100 snapshot.lammpstrj id type x y z
+
+# -----------------------------
+# Energy Minimization
+# -----------------------------
+
+minimize      1e-10 1e-10 1000 10000
+
+# ---------------------------------
+# Initial Equilibration at lower timestep
+# ---------------------------------
+# Use a smaller timestep for initial equilibration at the starting temperature
+timestep      0.00025     # smaller timestep for initial stability
+
+# Velocity Initialization
+velocity      all create {temp_init} 12345 dist gaussian
+
+# Equilibrate at {temp_init} with a smaller timestep
+fix           eq all nvt temp {temp_init} {temp_init} 0.1
+run           5000
+unfix         eq
+
+# ---------------------------------------------------------
+# Increase the timestep for heating and main simulation
+# ---------------------------------------------------------
+timestep      0.001      # now we increase the timestep
+
+# Gradual Heating from {temp_init} to {temp}
+fix           mynpt all npt temp {temp_init} {temp} 0.2 aniso 0.0 0.0 1.0
+run           5000    # gradual heating phase
+unfix         mynpt
+
+# Equilibration at {temp} with increased timestep
+fix           mynpt all npt temp {temp} {temp} 0.2 aniso 0.0 0.0 1.0
+run           {steps}  # main simulation
+unfix         mynpt
+
+write_data    si_sio2_snapshot_{data_name}.data

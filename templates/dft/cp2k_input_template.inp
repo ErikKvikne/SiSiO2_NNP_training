@@ -1,0 +1,65 @@
+
+&GLOBAL
+   PRINT_LEVEL MEDIUM
+   PROJECT <PROJECT>
+   RUN_TYPE ENERGY_FORCE
+   WALLTIME 3600
+&END GLOBAL
+
+&FORCE_EVAL
+   METHOD Quickstep
+   &DFT
+      BASIS_SET_FILE_NAME /users/ekvikne/cp2k_potential_and_basis_sets/BASIS_MOLOPT
+      POTENTIAL_FILE_NAME /users/ekvikne/cp2k_potential_and_basis_sets/GTH_POTENTIALS
+      &MGRID
+         CUTOFF 400
+         REL_CUTOFF 40
+         NGRIDS 4
+      &END MGRID
+      &SCF
+         EPS_SCF 1e-06
+         MAX_SCF 35
+         &OT
+            ENERGY_GAP 0.1
+            MINIMIZER DIIS
+            PRECONDITIONER FULL_SINGLE_INVERSE
+         &END OT
+         &OUTER_SCF
+            EPS_SCF 1e-06
+            MAX_SCF 20
+         &END OUTER_SCF
+         SCF_GUESS ATOMIC
+      &END SCF
+      UKS .FALSE.
+      &XC
+         &XC_FUNCTIONAL PBE
+         &END XC_FUNCTIONAL
+      &END XC
+   &END DFT
+   &PRINT
+     &FORCES
+      FILENAME __STD_OUT__
+     &END FORCES
+   &END PRINT
+   &SUBSYS
+      &KIND O
+         BASIS_SET DZVP-MOLOPT-SR-GTH
+         POTENTIAL GTH-PBE-q6
+      &END KIND
+      &KIND Si
+         BASIS_SET DZVP-MOLOPT-SR-GTH
+         POTENTIAL GTH-PBE-q4
+      &END KIND
+      &CELL
+         CELL_FILE_FORMAT CIF
+         CELL_FILE_NAME <CELL_FILE_NAME>
+         PERIODIC XYZ
+      &END CELL
+      &TOPOLOGY
+         CONN_FILE_FORMAT OFF
+         COORD_FILE_FORMAT CIF
+         COORD_FILE_NAME <CELL_FILE_NAME>
+      &END TOPOLOGY
+   &END SUBSYS
+&END FORCE_EVAL
+
