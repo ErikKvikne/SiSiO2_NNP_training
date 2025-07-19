@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Define the remote login details
-REMOTE_USER="ekvikne"
+REMOTE_USER="YOUR-USER-NAME"
 REMOTE_HOST="puhti.csc.fi"
 
 # Ensure both remote and local paths are provided
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <remote_full_path> <local_destination>"
-    echo "Example: $0 /scratch/jeakola/ekvikne/deepmd/test_run /path/to/local/destination/"
+    echo "Example: $0 /scratch/project/user/deepmd/test_run /path/to/local/destination/"
     exit 1
 fi
 
