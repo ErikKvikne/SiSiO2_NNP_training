@@ -57,7 +57,7 @@ timestep      0.001      # now we increase the timestep
 
 # Gradual Heating from {temp_init} to {temp}
 fix           mynpt all npt temp {temp_init} {temp} 0.2 aniso 0.0 0.0 1.0
-run           5000    # gradual heating phase
+run           50000    # gradual heating phase
 unfix         mynpt
 
 # Equilibration at {temp} with increased timestep

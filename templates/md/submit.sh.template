@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=jeakola
+#SBATCH --account={account_name}
 #SBATCH --job-name={data_name}
 #SBATCH --output=my_job_%j.out
 #SBATCH --error=my_job_%j.err
