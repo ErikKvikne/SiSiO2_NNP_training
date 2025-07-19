@@ -1,47 +1,55 @@
-# **Si/SiO2 Neural Network Potential Training Workflow**
+# **Si/SiO₂ Neural Network Potential Training Workflow**
 
-This repository contains the **automated workflow** for generating **Si/SiO₂ interfaces**, running **Molecular Dynamics (MD) simulations**, and performing **Density Functional Theory (DFT) calculations**. The goal is to create a **high-quality dataset** for training **Neural Network Potentials (NNPs)**, enabling accurate and efficient large-scale simulations of silicon/silica interfaces.
+This repository contains the complete workflow used in the master's thesis for simulating and analyzing oxygen diffusion in Si/SiO₂ interfaces. The goal is to generate high-quality datasets using Molecular Dynamics (MD) and Density Functional Theory (DFT) to train Neural Network Potentials (NNPs) that enable large-scale, accurate simulations of semiconductor interfaces.
 
-## **Project Overview**  
-Silicon/silica (Si/SiO₂) interfaces are crucial in semiconductor devices, influencing properties such as **charge distribution**, **defect states**, and **electronic structure**. Traditional methods like **DFT** are computationally expensive for large systems, while empirical force fields lack accuracy. **NNPs** offer a promising alternative, but their effectiveness depends on the quality of the training dataset.
+## **Overview**
 
-This workflow automates:  
-- **Si/SiO₂ interface generation** using **Pymatgen**.  
-- **MD simulations** using **LAMMPS** and **MACE-MP-0**.  
-- **DFT calculations** using **CP2K**.  
-- **Data collection** for training an **NNP**.  
+The project focuses on:
+- Generating crystalline and amorphous Si/SiO₂ interface structures
+- Running MD simulations using DeepMD-trained models
+- Performing DFT calculations with CP2K for validation and dataset generation
+- Training and analyzing NNPs with a focus on oxygen diffusion mechanisms
 
-## **Repository Structure**  
+## Repository Structure
+
 ```
-📂 master_thesis/  
-│── src/ (Main source code)  
-│   │── structures/ (Interface generation scripts)  
-│   │   ├── si_sio2_generator.py (Class for Si/SiO2 interface generation)  
-│   │── md_simulations/ (Molecular Dynamics (MD) scripts)  
-│   │   ├── md_runner.py (Runs LAMMPS simulations)  
-│   │   ├── analysis.py (Post-processing tools)  
-│   │── dft_calculations/ (DFT simulation scripts)  
-│   │   ├── cp2k_runner.py (Runs CP2K calculations)  
-│   │   ├── input_generator.py (Generates CP2K input files)  
-│   │── utils/ (Helper functions)  
-│   │   ├── file_io.py (File reading/writing utilities)  
-│   │   ├── visualization.py (Visualization tools)  
-│── data/ (Stores generated structures and results)  
-│   │── structures/ (CIF, XYZ files)  
-│   │── md_results/ (MD trajectory outputs)  
-│   │── dft_results/ (DFT calculations)  
-│── scripts/ (Standalone execution scripts)  
-│   ├── run_structure_gen.py (Generates an interface)  
-│   ├── run_md.py (Runs an MD simulation)  
-│   ├── run_dft.py (Runs a DFT calculation)  
-│── notebooks/ (Jupyter notebooks for analysis)  
-│── requirements.txt (Dependencies)  
-│── README.md (Project documentation)  
-│── .gitignore (Files to exclude from version control)  
+data/                         # Contains structures and datasets
+├── deepmd_dataset/          # DeepMD training dataset
+└── structures/              # CIF/XYZ/LAMMPS files for Si/SiO₂ systems
+
+dft/                          # Scripts for automating DFT calculations
+├── automate_cp2k.py
+└── copy_dft.sh
+
+md_setup/                     # Scripts and notebooks for setting up MD jobs
+├── frozen_si_interface_example.ipynb
+└── md_job_setup.py
+
+models/                       # Trained DeepMD models
+├── oxygen_diffusion_model/
+│   └── 25-05-13_model_oxygen_diffusion_main.pb
+└── preliminary_dataset_model/
+
+structure_generation/         # Code for building interface structures
+├── bulk_structure_generator.py
+├── si_sio2_generator.py
+├── zsl_example_usage.ipynb
+└── zsl_generator/
+    ├── interface_from_zsl.py
+    ├── zsl_analyzer.py
+    └── zsl_match.py
+
+templates/                    # Input templates for DFT and MD simulations
+├── dft/
+└── md/
+
+prep.ipynb                    # Structure preparation and overview notebook
+README.md
 ```
 
-## **Installation & Setup**  
-### **1. Clone the Repository**  
-```sh
-git clone git@github.com:ErikKvikne/SiSiO2_NNP_training.git
-cd SiSiO2_NNP_training
+## **Notes**
+
+- All MD simulations use DeepMD models trained on DFT-labeled data.
+- DFT calculations are performed using CP2K and are automated for batch processing.
+- The interface structures are generated using ZSL matching (via `pymatgen`) and adapted to match amorphous oxide layers.
+- The workflow was developed and used for the master’s thesis submitted in July 2025 at NTNU.
